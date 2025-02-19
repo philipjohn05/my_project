@@ -1,145 +1,145 @@
-/* Basic Reset */
+/* Reset and Basic Styling */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #f4f4f4;
+  font-family: "Calibri", sans-serif;
+  background-color: #f9f9f9;
   color: #333;
   line-height: 1.6;
-  padding: 20px;
+  margin: 0;
+  padding: 0;
 }
 
-/* Header */
-header {
-  background: #0073e6;
-  color: #fff;
-  padding: 20px 0;
+/* Hero Section */
+.hero {
   text-align: center;
-  border-radius: 5px;
+  background-color: #0073e6;
+  color: #fff;
+  padding: 100px 20px;
 }
 
-header h1 {
-  font-size: 2.5em;
+.hero h1 {
+  font-size: 3em;
+  margin-bottom: 10px;
 }
 
-header p {
-  font-size: 1.2em;
-  margin-top: 5px;
+.hero p {
+  font-size: 1.5em;
+  margin-bottom: 20px;
 }
 
-header a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-header button {
-  padding: 10px 20px;
-  margin-top: 20px;
+.hero .cta-btn {
   background-color: #ff9800;
-  color: white;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 1.2em;
   border: none;
-  cursor: pointer;
   border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s;
 }
 
-header button:hover {
+.hero .cta-btn:hover {
   background-color: #e68900;
 }
 
-/* Main Content */
+/* Section Styling */
 section {
-  margin: 20px 0;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
 section h2 {
-  font-size: 1.8em;
-  margin-bottom: 15px;
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #0073e6;
+  text-align: center;
 }
 
 section ul {
-  list-style-type: none;
+  list-style: none;
   padding-left: 0;
 }
 
 section ul li {
-  margin: 5px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+section ul li:last-child {
+  border-bottom: none;
 }
 
 /* Skills Section */
-.skills .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
+#skills ul li {
+  display: flex;
+  align-items: center;
 }
 
-.skills .grid div {
-  background: #e0e0e0;
-  padding: 15px;
-  border-radius: 5px;
-  text-align: center;
-  transition:
-    transform 0.3s ease,
-    background-color 0.3s ease;
+#skills ul li strong {
+  margin-right: 10px;
+  color: #0073e6;
 }
 
-.skills .grid div:hover {
-  transform: scale(1.05);
-  background-color: #ff9800;
-  color: white;
+/* Experience Section */
+#experience .experience-item {
+  margin-bottom: 30px;
 }
 
-/* Job Cards */
-.job-card {
-  background: #f9f9f9;
+#experience .experience-item h3 {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+  color: #0073e6;
+}
+
+#experience .experience-item ul {
+  padding-left: 20px;
+  list-style-type: square;
+}
+
+/* Projects Section */
+#projects .project-item {
+  background: #fff;
   padding: 20px;
   border-radius: 5px;
-  margin: 15px 0;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-.job-card h3 {
-  font-size: 1.5em;
+#projects .project-item a {
+  color: #0073e6;
+  text-decoration: none;
 }
 
-.job-card p {
-  font-size: 1.2em;
-  margin-top: 10px;
+#projects .project-item a:hover {
+  text-decoration: underline;
 }
 
-.job-card ul {
-  list-style-type: square;
-  padding-left: 20px;
+/* Contact Section */
+#contact a {
+  color: #0073e6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#contact a:hover {
+  text-decoration: underline;
 }
 
 /* Footer */
 footer {
   text-align: center;
   padding: 20px;
-  background: #333;
-  color: white;
-  border-radius: 5px;
-  margin-top: 20px;
+  background-color: #333;
+  color: #fff;
 }
 
-footer button {
-  padding: 10px 20px;
-  background-color: #ff9800;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-footer button:hover {
-  background-color: #e68900;
+footer p {
+  margin: 0;
 }
