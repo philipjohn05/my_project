@@ -1,0 +1,145 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  background: #0073e6;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
+  border-radius: 5px;
+}
+
+header h1 {
+  font-size: 2.5em;
+}
+
+header p {
+  font-size: 1.2em;
+  margin-top: 5px;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+header button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+header button:hover {
+  background-color: #e68900;
+}
+
+/* Main Content */
+section {
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+}
+
+section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+section ul li {
+  margin: 5px 0;
+}
+
+/* Skills Section */
+.skills .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.skills .grid div {
+  background: #e0e0e0;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.skills .grid div:hover {
+  transform: scale(1.05);
+  background-color: #ff9800;
+  color: white;
+}
+
+/* Job Cards */
+.job-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 15px 0;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.job-card h3 {
+  font-size: 1.5em;
+}
+
+.job-card p {
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.job-card ul {
+  list-style-type: square;
+  padding-left: 20px;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #333;
+  color: white;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+footer button {
+  padding: 10px 20px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+footer button:hover {
+  background-color: #e68900;
+}
