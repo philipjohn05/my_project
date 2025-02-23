@@ -40,18 +40,32 @@ resource "aws_s3_bucket_website_configuration" "website" {
   }
 }
 
-resource "aws_s3_object" "resume_files" {
-  for_each = { for file in fileset("${path.module}/files", "*") : file => file if !startswith(file, ".") }
+resource "aws_s3_object" "website_files" {
+  for_each = {
+    for file in fileset("/Users/pjfaraon/Documents/my_project/personal-site-main/build", "**/*") : 
+    file => file if !startswith(file, ".") 
+  }
 
   bucket = var.bucket_name
   key    = each.value
-  source = "${path.module}/files/${each.value}"
+  source = "/Users/pjfaraon/Documents/my_project/personal-site-main/build/${each.value}"
+
   content_type = lookup({
-    "html" = "text/html",
-    "css"  = "text/css",
-    "js"   = "application/javascript",
-    "png"  = "image/png",
-    "jpg"  = "image/jpeg"
-  }, split(".", each.value)[1], "application/octet-stream")
+    "html"  = "text/html",
+    "css"   = "text/css",
+    "js"    = "application/javascript",
+    "png"   = "image/png",
+    "jpg"   = "image/jpeg",
+    "jpeg"  = "image/jpeg",
+    "gif"   = "image/gif",
+    "svg"   = "image/svg+xml",
+    "webp"  = "image/webp",
+    "woff"  = "font/woff",
+    "woff2" = "font/woff2",
+    "ttf"   = "font/ttf",
+    "otf"   = "font/otf",
+    "json"  = "application/json",
+    "txt"   = "text/plain",
+  }, try(split(".", each.value)[length(split(".", each.value)) - 1], "other"), "application/octet-stream")
 }
 
