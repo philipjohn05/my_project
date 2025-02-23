@@ -4,10 +4,7 @@ terraform {
 
 dependency "acm" {
   config_path = "./acm"
+  skip_outputs = true
 }
 
-
-inputs = {
-  bucket_name = "pjfaraon-resume"
-}
 
