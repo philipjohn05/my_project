@@ -1,0 +1,161 @@
+/* Resume */
+
+#resume {
+  .link-to {
+    position: relative;
+    top: -4.5em;
+  }
+
+  .link-container h4 {
+    text-decoration: none;
+    border-bottom: none;
+    display: inline-flex;
+
+    a {
+      padding: 0 0.5em;
+      margin: 0;
+    }
+  }
+
+  .education {
+    .title {
+      text-align: center;
+      margin-bottom: 2em;
+    }
+  }
+
+  .experience {
+    .title {
+      text-align: center;
+    }
+    .job {
+      margin: 1em;
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  .jobs-container {
+    .points {
+      li {
+        margin: 0;
+        padding: 0;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  .courses {
+    padding-top: 1.6em;
+    .title {
+      text-align: center;
+    }
+    .course-list {
+      text-align: center;
+      list-style-type: disc; /* Use bullet points for the list */
+      padding-left: 20px; /* Adds space for the bullets */
+    }
+
+    .course-list ul {
+      list-style: disc; /* Displays bullet points */
+      padding-left: 20px;
+    }
+
+    .course-list li {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 0.5em; /* Adds spacing between items */
+    }
+
+    .course-number {
+      display: none; /* Hide course number to remove the ":" */
+    }
+
+    .course-name {
+      font-family: "Raleway", Helvetica, sans-serif;
+      font-size: 1.2em; /* Adjust the size if needed */
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      margin-top: -1em;
+      text-transform: uppercase;
+    }
+  }
+
+  .skills {
+    margin-top: 2em;
+    .title {
+      text-align: center;
+      p {
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  .summary {
+    margin-bottom: 0.5em;
+    font-size: 0.9em;
+  }
+
+  .references {
+    margin: 2em 0;
+    .title {
+      text-align: center;
+    }
+  }
+
+  /* Styling for the project bullet points */
+  .project-list {
+    padding-left: 20px; /* Adds space for the bullet points */
+    list-style-type: disc; /* Ensures the list uses bullet points */
+    margin-bottom: 1em; /* Adds spacing between list items */
+    line-height: 1.5; /* Makes the list items more readable */
+  }
+
+  .project-list li {
+    font-size: 1.2em;
+    margin-bottom: 0.5em; /* Adds spacing between projects */
+  }
+
+  .leading-projects {
+    font-size: 1.3em;
+    margin-bottom: 1.5em;
+    font-weight: bold;
+  }
+}
+
+.daterange {
+  margin-bottom: 0.2em;
+}
+
+.degree-container {
+  h4 {
+    font-weight: normal;
+  }
+
+  .degree {
+    margin-bottom: 0.1em;
+    text-transform: none;
+    letter-spacing: 0.16em;
+    font-size: 0.8em;
+  }
+
+  .school {
+    text-transform: none;
+    padding-top: 0.3em;
+    margin-bottom: 1em;
+  }
+}
+
+.course-dot {
+  display: none;
+}
+
+@include breakpoint(small) {
+  .course-dot {
+    display: none;
+  }
+  .course-container a {
+    display: block;
+  }
+}

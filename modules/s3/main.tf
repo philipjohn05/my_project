@@ -1,52 +1,27 @@
-# Remove the aws_s3_bucket block since the bucket already exists
-
-# Use the existing bucket name as a variable
-
-resource "aws_s3_bucket_public_access_block" "public_access" {
-  bucket                  = var.bucket_name
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+# Define the AWS provider
+provider "aws" {
+  region = "ap-southeast-2"  # Sydney region
 }
 
-resource "aws_s3_bucket_policy" "resume_policy" {
-  bucket = var.bucket_name
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::${var.bucket_name}/*"
-      }
-    ]
-  })
+# Define the S3 bucket resource
+resource "aws_s3_bucket" "website_bucket" {
+  bucket = var.bucket_name  # Use the bucket name variable
+  acl    = "public-read"    # Make the bucket publicly readable
 
-  depends_on = [aws_s3_bucket_public_access_block.public_access]
-}
-
-resource "aws_s3_bucket_website_configuration" "website" {
-  bucket = var.bucket_name
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
+  tags = {
+    Name        = "My Portfolio Website"
+    Environment = "Production"
   }
 }
 
+# Upload the files to S3
 resource "aws_s3_object" "website_files" {
   for_each = {
     for file in fileset("/Users/pjfaraon/Documents/my_project/personal-site-main/build", "**/*") : 
-    file => file if !startswith(file, ".") 
+    file => file if !startswith(file, ".")
   }
 
-  bucket = var.bucket_name
+  bucket = aws_s3_bucket.website_bucket.bucket  # Ensure the bucket reference is correct
   key    = each.value
   source = "/Users/pjfaraon/Documents/my_project/personal-site-main/build/${each.value}"
 
@@ -68,4 +43,3 @@ resource "aws_s3_object" "website_files" {
     "txt"   = "text/plain",
   }, try(split(".", each.value)[length(split(".", each.value)) - 1], "other"), "application/octet-stream")
 }
-

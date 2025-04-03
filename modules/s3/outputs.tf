@@ -1,12 +1,8 @@
 output "s3_bucket_name" {
-  value = var.bucket_name # Use the provided bucket name instead of a resource reference
+  value = aws_s3_bucket.website_bucket.bucket  # This should match the resource name in main.tf
 }
 
 output "s3_bucket_domain_name" {
-  value = "s3-website-${var.bucket_name}.s3.amazonaws.com" # Manually construct the website endpoint
-}
-
-output "files_in_build" {
-  value = fileset("${path.module}/../../personal-site-main/build", "*")
+  value = "${aws_s3_bucket.website_bucket.bucket}.s3.amazonaws.com"
 }
 

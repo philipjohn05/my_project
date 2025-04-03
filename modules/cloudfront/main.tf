@@ -21,6 +21,11 @@ resource "aws_cloudfront_distribution" "resume_distribution" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
+
+    # Set TTL values here for cache behavior
+    min_ttl     = 0
+    max_ttl     = 86400
+    default_ttl = 3600
   }
 
   restrictions {
@@ -32,6 +37,11 @@ resource "aws_cloudfront_distribution" "resume_distribution" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2019"
   }
+
+  # Error handling: Redirect all 404 errors to index.html
+  custom_error_response {
+    error_code         = 404
+    response_page_path = "/index.html"
+    response_code      = 200
+  }
 }
-
-
