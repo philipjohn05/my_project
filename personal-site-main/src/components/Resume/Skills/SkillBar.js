@@ -41,4 +41,8 @@ SkillBar.propTypes = {
   ),
 };
 
+SkillBar.defaultProps = {
+  categories: [],
+};
+
 export default SkillBar;

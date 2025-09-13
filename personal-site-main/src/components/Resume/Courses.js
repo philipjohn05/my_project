@@ -38,4 +38,8 @@ Courses.propTypes = {
   ),
 };
 
+Courses.defaultProps = {
+  data: [],
+};
+
 export default Courses;

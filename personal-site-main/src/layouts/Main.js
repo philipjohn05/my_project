@@ -6,7 +6,12 @@ import Navigation from '../components/Template/Navigation';
 import SideBar from '../components/Template/SideBar';
 import ScrollToTop from '../components/Template/ScrollToTop';
 
-const Main = ({ children = null, fullPage = false, title = null, description = 'Philip John portfolio.' }) => (
+const Main = ({
+  children = null,
+  fullPage = false,
+  title = null,
+  description = 'Philip John portfolio.',
+}) => (
   <HelmetProvider>
     <ScrollToTop />
     <Helmet
@@ -33,6 +38,13 @@ Main.propTypes = {
   fullPage: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
+};
+
+Main.defaultProps = {
+  children: null,
+  fullPage: false,
+  title: null,
+  description: 'Philip John portfolio.',
 };
 
 export default Main;
