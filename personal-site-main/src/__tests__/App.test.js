@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import '@testing-library/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import App from '../App';
 
 describe('renders the app', () => {
@@ -41,7 +41,7 @@ describe('renders the app', () => {
   });
 
   it('should render the title', async () => {
-    expect(document.title).toBe("Michael D'Angelo");
+    expect(document.title).toBe('Philip John');
   });
 
   it('can navigate to /about', async () => {

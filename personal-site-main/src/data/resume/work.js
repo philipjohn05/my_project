@@ -15,6 +15,7 @@ const work = [
   {
     name: 'NCS PTE LTD',
     position: 'DevOps Engineer - Client (Ministry of Home Affairs)',
+    client: 'Ministry of Home Affairs',
     startDate: '2024-07-01',
     endDate: '2025-01-05',
     highlights: [
@@ -31,6 +32,7 @@ const work = [
   {
     name: 'NCS PTE LTD',
     position: 'DevOps Engineer / Infrastructure Engineer - Client (Development Bank Of Singapore)',
+    client: 'Development Bank Of Singapore',
     startDate: '2020-07-01',
     endDate: '2023-09-05',
     highlights: [
@@ -43,7 +45,8 @@ const work = [
   {
     name: 'Boston Software Solutions International Pte Ltd',
     position: 'DevOps Engineer / Infrastructure Engineer - Client (Development Bank Of Singapore)',
-    startDate: '2026-04-01',
+    client: 'Development Bank Of Singapore',
+    startDate: '2016-04-01',
     endDate: '2019-12-05',
     highlights: [
       'Led architecture reviews, ensuring compliance with corporate standards.',
@@ -55,7 +58,8 @@ const work = [
   {
     name: 'UST Global PTE LTD',
     position: 'DevOps Engineer / Infrastructure Engineer - Client (Development Bank Of Singapore)',
-    startDate: '2023-02-01',
+    client: 'Development Bank Of Singapore',
+    startDate: '2013-02-01',
     endDate: '2016-03-05',
     highlights: [
       'Managed software deployments, configuration changes, and build automation for banking applications.',
