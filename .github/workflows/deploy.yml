@@ -119,11 +119,35 @@ jobs:
         run: |
           cd environments/${{ github.event.inputs.environment || 'prod' }}
           terragrunt init
+          
+          # First try to plan
           terragrunt plan -detailed-exitcode || exit_code=$?
           
           if [ ${exit_code} -eq 2 ]; then
             echo "Changes detected, applying..."
-            terragrunt apply -auto-approve
+            terragrunt apply -auto-approve 2>&1 | tee apply_output.log || apply_exit_code=$?
+            
+            # Check if we got BucketAlreadyOwnedByYou error and try to import
+            if [ ${apply_exit_code:-0} -ne 0 ] && grep -q "BucketAlreadyOwnedByYou" apply_output.log; then
+              echo "Bucket already exists. Attempting to import into Terraform state..."
+              
+              # Extract bucket name from error or use default
+              BUCKET_NAME=$(grep -o 'pjfaraon-resume-au' apply_output.log | head -1)
+              BUCKET_NAME=${BUCKET_NAME:-"pjfaraon-resume-au"}
+              
+              echo "Importing bucket: $BUCKET_NAME"
+              terragrunt import aws_s3_bucket.website_bucket "$BUCKET_NAME" || echo "Import failed or resource already imported"
+              
+              # Try to import related resources
+              terragrunt import aws_s3_bucket_website_configuration.website_config "$BUCKET_NAME" || echo "Website config not imported"
+              terragrunt import aws_s3_bucket_public_access_block.website_bucket_pab "$BUCKET_NAME" || echo "PAB not imported"
+              terragrunt import aws_s3_bucket_policy.website_bucket_policy "$BUCKET_NAME" || echo "Policy not imported"
+              
+              echo "Retrying apply after import..."
+              terragrunt apply -auto-approve
+            elif [ ${apply_exit_code:-0} -ne 0 ]; then
+              exit ${apply_exit_code}
+            fi
           elif [ ${exit_code} -eq 0 ]; then
             echo "No changes detected"
           else
