@@ -17,10 +17,18 @@ const Index = () => (
             <Link to="/">About this site</Link>
           </h2>
           <p>
-            This website portfolio showcases my skills, experiences, and projects,
-            and is deployed on Amazon Web Services (AWS) using Terraform and Terragrunt
-            for Infrastructure as Code (IaC). The deployment leverages a variety of AWS
-            services to ensure scalability, high availability, and security.
+            This portfolio demonstrates my skills, experiences, and projects,
+            showcasing real-world DevOps and cloud engineering practices.
+            The site is deployed on Amazon Web Services (AWS) using Terraform and Terragrunt
+            for Infrastructure as Code (IaC), ensuring scalable, secure,
+            and highly available infrastructure.
+            Beyond AWS, I also develop cloud-native applications on Azure,
+            such as my Task Management Platform,
+            highlighting my ability to design, automate, and manage multi-cloud environments
+            with modern CI/CD pipelines and serverless architectures.
+            This site is not just a portfolio—it&apos;s a live example of how automation,
+            cloud architecture, and best practices come together to deliver professional,
+            reliable, and maintainable solutions.
           </p>
         </div>
       </header>
@@ -28,8 +36,7 @@ const Index = () => (
         {' '}
         Welcome to my website. Please feel free to read more{' '}
         <Link to="/about">about me</Link>, or you can check out my{' '}
-        <Link to="/resume">resume</Link>, <Link to="/projects">projects</Link>,{' '}
-        view <Link to="/stats">site statistics</Link>, or{' '}
+        <Link to="/resume">resume</Link>, <Link to="/projects">projects</Link>, or{' '}
         <Link to="/contact">contact</Link> me.
       </p>
       <p>

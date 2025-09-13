@@ -3,5 +3,42 @@
 .terraform.lock.hcl
 .terragrunt-cache/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+*.backup
 *.log
+
+# Ignore build outputs and cache
+node_modules/
+build/
+dist/
+*.tgz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore sensitive files
+*.env
+*.env.local
+*.env.production
+*.env.development
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Ignore duplicate/nested git repos and project files
+personal-site-main/my_project/
+**/my_project/
+*.sln
+
+# Ignore taskapp-portfolio (exists in separate repo)
+taskapp-portfolio/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

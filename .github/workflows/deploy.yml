@@ -1,0 +1,159 @@
+name: Deploy Personal Site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'personal-site-main/**'
+      - 'environments/**'
+      - 'modules/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+
+env:
+  AWS_REGION: ap-southeast-2
+  TERRAFORM_VERSION: 1.5.7
+  TERRAGRUNT_VERSION: 0.53.0
+
+jobs:
+  build:
+    name: Build React App
+    runs-on: ubuntu-latest
+    outputs:
+      build-hash: ${{ steps.build-hash.outputs.hash }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'personal-site-main/.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'personal-site-main/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd personal-site-main
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd personal-site-main
+          npm test -- --coverage --watchAll=false
+
+      - name: Run linting
+        run: |
+          cd personal-site-main
+          npm run lint
+
+      - name: Build application
+        run: |
+          cd personal-site-main
+          npm run build
+
+      - name: Generate build hash
+        id: build-hash
+        run: |
+          cd personal-site-main/build
+          HASH=$(find . -type f -exec sha256sum {} \; | sha256sum | cut -d' ' -f1)
+          echo "hash=${HASH}" >> $GITHUB_OUTPUT
+          echo "Build hash: ${HASH}"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files-${{ steps.build-hash.outputs.hash }}
+          path: personal-site-main/build/
+          retention-days: 30
+
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: build
+    environment: 
+      name: ${{ github.event.inputs.environment || 'prod' }}
+      url: ${{ steps.get-url.outputs.url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files-${{ needs.build.outputs.build-hash }}
+          path: personal-site-main/build/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          wget -O terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TERRAGRUNT_VERSION }}/terragrunt_linux_amd64"
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/
+          terragrunt --version
+
+      - name: Deploy infrastructure
+        run: |
+          cd environments/${{ github.event.inputs.environment || 'prod' }}
+          terragrunt init
+          terragrunt plan -detailed-exitcode || exit_code=$?
+          
+          if [ ${exit_code} -eq 2 ]; then
+            echo "Changes detected, applying..."
+            terragrunt apply -auto-approve
+          elif [ ${exit_code} -eq 0 ]; then
+            echo "No changes detected"
+          else
+            echo "Plan failed"
+            exit ${exit_code}
+          fi
+
+      - name: Get deployment URL
+        id: get-url
+        run: |
+          cd environments/${{ github.event.inputs.environment || 'prod' }}
+          URL=$(terragrunt output -raw website_endpoint 2>/dev/null || echo "http://$(terragrunt output -raw s3_bucket_name 2>/dev/null).s3-website-${{ env.AWS_REGION }}.amazonaws.com")
+          echo "url=http://${URL}" >> $GITHUB_OUTPUT
+          echo "🌐 Website URL: http://${URL}"
+
+      - name: Invalidate CloudFront (if exists)
+        run: |
+          cd environments/${{ github.event.inputs.environment || 'prod' }}
+          DISTRIBUTION_ID=$(terragrunt output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+          if [ -n "$DISTRIBUTION_ID" ]; then
+            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+            aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
+          else
+            echo "No CloudFront distribution found, skipping invalidation"
+          fi
+
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ github.event.inputs.environment || 'prod' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Hash**: ${{ needs.build.outputs.build-hash }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Website URL**: ${{ steps.get-url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **AWS Region**: ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY

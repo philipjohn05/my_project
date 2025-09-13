@@ -1,0 +1,120 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'personal-site-main/**'
+      - 'environments/**'
+      - 'modules/**'
+
+env:
+  AWS_REGION: ap-southeast-2
+  TERRAFORM_VERSION: 1.5.7
+  TERRAGRUNT_VERSION: 0.53.0
+
+jobs:
+  test:
+    name: Test React App
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'personal-site-main/.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'personal-site-main/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd personal-site-main
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd personal-site-main
+          npm test -- --coverage --watchAll=false
+
+      - name: Run linting
+        run: |
+          cd personal-site-main
+          npm run lint
+
+      - name: Build application
+        run: |
+          cd personal-site-main
+          npm run build
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.changed_files, 'environments/') || contains(github.event.pull_request.changed_files, 'modules/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          wget -O terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TERRAGRUNT_VERSION }}/terragrunt_linux_amd64"
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/
+
+      - name: Create dummy build directory
+        run: |
+          mkdir -p personal-site-main/build
+          echo "<html><body>Test</body></html>" > personal-site-main/build/index.html
+
+      - name: Terragrunt Plan
+        id: plan
+        run: |
+          cd environments/prod
+          terragrunt init
+          terragrunt plan -detailed-exitcode -no-color | tee plan.out
+        continue-on-error: true
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: ${{ steps.plan.outputs.stdout }}
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('environments/prod/plan.out', 'utf8');
+            
+            const output = `## 🏗️ Terraform Plan
+            
+            <details>
+            <summary>Show Plan</summary>
+            
+            \`\`\`
+            ${plan}
+            \`\`\`
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });

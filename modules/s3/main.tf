@@ -1,45 +1,70 @@
-# Define the AWS provider
-provider "aws" {
-  region = "ap-southeast-2"  # Sydney region
-}
-
-# Define the S3 bucket resource
+# S3 bucket for static website hosting
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = var.bucket_name  # Use the bucket name variable
-  acl    = "public-read"    # Make the bucket publicly readable
+  bucket = var.bucket_name
 
-  tags = {
-    Name        = "My Portfolio Website"
-    Environment = "Production"
+  tags = var.tags
+}
+
+# S3 bucket website configuration
+resource "aws_s3_bucket_website_configuration" "website_config" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+
+  routing_rule {
+    condition {
+      key_prefix_equals = "docs/"
+    }
+    redirect {
+      replace_key_prefix_with = "documents/"
+    }
   }
 }
 
-# Upload the files to S3
+# S3 bucket public access block
+resource "aws_s3_bucket_public_access_block" "website_bucket_pab" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# S3 bucket policy for public read access
+resource "aws_s3_bucket_policy" "website_bucket_policy" {
+  bucket = aws_s3_bucket.website_bucket.id
+  depends_on = [aws_s3_bucket_public_access_block.website_bucket_pab]
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.website_bucket.arn}/*"
+      },
+    ]
+  })
+}
+
+# Upload website files to S3
 resource "aws_s3_object" "website_files" {
-  for_each = {
-    for file in fileset("/Users/pjfaraon/Documents/my_project/personal-site-main/build", "**/*") : 
-    file => file if !startswith(file, ".")
-  }
+  for_each = var.build_files
 
-  bucket = aws_s3_bucket.website_bucket.bucket  # Ensure the bucket reference is correct
-  key    = each.value
-  source = "/Users/pjfaraon/Documents/my_project/personal-site-main/build/${each.value}"
+  bucket       = aws_s3_bucket.website_bucket.bucket
+  key          = each.key
+  source       = each.value.source
+  content_type = each.value.content_type
+  etag         = filemd5(each.value.source)
 
-  content_type = lookup({
-    "html"  = "text/html",
-    "css"   = "text/css",
-    "js"    = "application/javascript",
-    "png"   = "image/png",
-    "jpg"   = "image/jpeg",
-    "jpeg"  = "image/jpeg",
-    "gif"   = "image/gif",
-    "svg"   = "image/svg+xml",
-    "webp"  = "image/webp",
-    "woff"  = "font/woff",
-    "woff2" = "font/woff2",
-    "ttf"   = "font/ttf",
-    "otf"   = "font/otf",
-    "json"  = "application/json",
-    "txt"   = "text/plain",
-  }, try(split(".", each.value)[length(split(".", each.value)) - 1], "other"), "application/octet-stream")
+  depends_on = [aws_s3_bucket_policy.website_bucket_policy]
 }

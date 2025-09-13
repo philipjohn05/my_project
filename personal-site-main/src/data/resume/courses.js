@@ -5,7 +5,11 @@ const courses = [
   },
   {
     title: 'AWS Certified Solutions Architect – Associate',
-    link: 'https://www.credly.com/badges/97befe6a-9bf8-4871-bd84-2ea41582659c/linked_in_profile',
+    link: 'https://www.credly.com/badges/66fb4280-23db-46cd-9327-f9dff2c2604f',
+  },
+  {
+    title: 'AWS Educate Introduction to Generative AI',
+    link: 'https://www.credly.com/badges/7e8fff7a-1631-49c2-9586-68520db19e63/',
   },
   {
     title: 'CKA: Certified Kubernetes Administrator',

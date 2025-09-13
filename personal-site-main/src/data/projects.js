@@ -1,5 +1,6 @@
 const data = [
   {
+    title: 'Technical Leadership & Project Delivery',
     bulletPoints: [
       'Successfully led the implementations of large-scale projects such as:',
       'SOI IB/MB 2.5x Upgrade - Improved application scalability and performance.',

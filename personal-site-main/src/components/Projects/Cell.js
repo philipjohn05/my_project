@@ -19,7 +19,6 @@ const Cell = ({ data }) => (
 Cell.propTypes = {
   data: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired, // You can remove this from PropTypes if not using the date
     bulletPoints: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
 };

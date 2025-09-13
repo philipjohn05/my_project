@@ -1,5 +1,5 @@
-variable "s3_bucket_domain_name" {
-  description = "The domain name of the S3 bucket"
+variable "s3_website_endpoint" {
+  description = "The website endpoint of the S3 bucket"
   type        = string
 }
 

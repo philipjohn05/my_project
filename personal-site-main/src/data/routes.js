@@ -16,10 +16,6 @@ const routes = [
     label: 'Projects',
     path: '/projects',
   },
-  // {
-  //  label: 'Stats',
-  //  path: '/stats',
-  // },
   {
     label: 'Contact',
     path: '/contact',
