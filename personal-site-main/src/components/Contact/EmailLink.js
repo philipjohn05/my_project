@@ -97,8 +97,4 @@ EmailLink.propTypes = {
   loopMessage: PropTypes.bool,
 };
 
-EmailLink.defaultProps = {
-  loopMessage: false,
-};
-
 export default EmailLink;

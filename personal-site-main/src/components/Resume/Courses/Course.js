@@ -24,8 +24,4 @@ Course.propTypes = {
   last: PropTypes.bool,
 };
 
-Course.defaultProps = {
-  last: false,
-};
-
 export default Course;

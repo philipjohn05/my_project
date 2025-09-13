@@ -92,9 +92,4 @@ Skills.propTypes = {
   ),
 };
 
-Skills.defaultProps = {
-  skills: [],
-  categories: [],
-};
-
 export default Skills;

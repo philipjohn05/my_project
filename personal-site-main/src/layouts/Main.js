@@ -40,11 +40,5 @@ Main.propTypes = {
   description: PropTypes.string,
 };
 
-Main.defaultProps = {
-  children: null,
-  fullPage: false,
-  title: null,
-  description: 'Philip John portfolio.',
-};
 
 export default Main;

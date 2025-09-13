@@ -29,8 +29,4 @@ Experience.propTypes = {
   ),
 };
 
-Experience.defaultProps = {
-  data: [],
-};
-
 export default Experience;

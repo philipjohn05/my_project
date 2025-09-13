@@ -1,8 +1,8 @@
 const config = {
   moduleNameMapper: {
-    '^.+\\.(css|less|scss)$': 'babel-jest',
-    '^.+\\.md$': 'markdown-to-jsx',
+    '^.+\\.(css|less|scss)$': 'identity-obj-proxy',
   },
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
 };
 
 module.exports = config;

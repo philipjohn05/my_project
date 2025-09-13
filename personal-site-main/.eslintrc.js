@@ -52,5 +52,6 @@ module.exports = {
         return: true,
       },
     ],
+    'react/require-default-props': 0,
   },
 };
