@@ -10,7 +10,7 @@ Welcome to my [personal website](https://pjfaraon.com)! This is an React-based J
 
 ## 🛠 Adapting this Project
 
-Want to create your own personal website based on this project? You can set it up in as little as 30 minutes! Follow the setup instructions below and check out the **[detailed guide and checklist](./docs/adapting-guide.md)** on adapting this project to your needs. If you encounter any challenges, don't hesitate to contact me through an issue or email at [help@mldangelo.com](mailto:help@mldangelo.com).
+Want to create your own personal website based on this project? You can set it up in as little as 30 minutes! Follow the setup instructions below and check out the **[detailed guide and checklist](./docs/adapting-guide.md)** on adapting this project to your needs.
 
 ## 🤝 Contributing
 
@@ -25,7 +25,7 @@ Ensure you have [node](https://nodejs.org/) >= v16. Optionally, use [nvm](https:
 1. Clone the repository:
 
    ```bash
-   git clone git://github.com/mldangelo/personal-site.git
+   git clone git://github.com/philipjohn05/my_project.git
    cd personal-site
    ```
 
