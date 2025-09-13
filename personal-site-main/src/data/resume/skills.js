@@ -5,6 +5,11 @@ const skills = [
     category: ['CI/CD'],
   },
   {
+    title: 'Github Actions',
+    competency: 4,
+    category: ['CI/CD'],
+  },
+  {
     title: 'Jenkins',
     competency: 4,
     category: ['CI/CD'],
@@ -157,6 +162,16 @@ const skills = [
   },
   {
     title: 'GitHub',
+    competency: 3,
+    category: ['Version Control'],
+  },
+  {
+    title: 'Gitlab',
+    competency: 3,
+    category: ['Version Control'],
+  },
+  {
+    title: 'Bitbucket',
     competency: 3,
     category: ['Version Control'],
   },
