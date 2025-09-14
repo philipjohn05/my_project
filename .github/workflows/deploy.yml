@@ -134,6 +134,12 @@ jobs:
           echo "🕐 Latest build file timestamp:"
           find personal-site-main/build -type f -exec stat -f "%m %N" {} \; | sort -n | tail -1
           
+      - name: Deploy build files directly to S3
+        run: |
+          echo "🚀 Uploading fresh build files directly to S3..."
+          aws s3 sync personal-site-main/build/ s3://pjfaraon-resume-au/ --delete --exclude ".DS_Store"
+          echo "✅ Build files uploaded successfully"
+          
       - name: Deploy infrastructure
         run: |
           cd environments/${{ github.event.inputs.environment || 'prod' }}
@@ -147,28 +153,16 @@ jobs:
           terragrunt import aws_s3_bucket_public_access_block.website_bucket_pab "$BUCKET_NAME" 2>/dev/null || echo "PAB not imported"
           terragrunt import aws_s3_bucket_policy.website_bucket_policy "$BUCKET_NAME" 2>/dev/null || echo "Policy not imported"
           
-          # Force Terragrunt to refresh and detect file changes
-          echo "♻️ Forcing Terragrunt to refresh..."
-          terragrunt refresh
-          
-          # Now try to plan
-          set +e
+          # Since we're uploading files directly with AWS CLI, just ensure infrastructure is in sync
+          echo "🏗️ Ensuring S3 bucket and infrastructure configuration..."
           terragrunt plan -detailed-exitcode
-          exit_code=$?
-          set -e
           
-          if [ "${exit_code}" -eq 2 ]; then
-            echo "✅ Changes detected, applying..."
-            terragrunt apply -auto-approve
-          elif [ "${exit_code}" -eq 0 ]; then
-            echo "⚠️ No changes detected by Terraform, but forcing apply to ensure fresh build deployment..."
-            echo "🔧 This ensures that even if Terraform doesn't detect file changes, we still upload fresh builds"
-            echo "🔄 Forcing Terraform to refresh state and re-upload all S3 objects..."
-            terragrunt apply -auto-approve -refresh-only
+          # Only apply if there are actual infrastructure changes needed
+          if [ $? -eq 2 ]; then
+            echo "✅ Infrastructure changes detected, applying..."
             terragrunt apply -auto-approve
           else
-            echo "❌ Plan failed with exit code: ${exit_code}"
-            exit ${exit_code}
+            echo "✅ Infrastructure is up to date (files uploaded directly via AWS CLI)"
           fi
 
       - name: Get deployment URL
