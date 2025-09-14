@@ -32,6 +32,13 @@ jobs:
       build-hash: ${{ steps.build-hash.outputs.hash }}
     
     steps:
+      - name: Debug workflow trigger
+        run: |
+          echo "🔍 Workflow triggered by: ${{ github.event_name }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "🌿 Branch: ${{ github.ref }}"
+          echo "👤 Actor: ${{ github.actor }}"
+          
       - name: Checkout code
         uses: actions/checkout@v4
 
