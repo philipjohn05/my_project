@@ -148,12 +148,15 @@ jobs:
           terragrunt refresh
           
           # Now try to plan
-          terragrunt plan -detailed-exitcode || exit_code=$?
+          set +e
+          terragrunt plan -detailed-exitcode
+          exit_code=$?
+          set -e
           
-          if [ ${exit_code} -eq 2 ]; then
+          if [ "${exit_code}" -eq 2 ]; then
             echo "Changes detected, applying..."
             terragrunt apply -auto-approve
-          elif [ ${exit_code} -eq 0 ]; then
+          elif [ "${exit_code}" -eq 0 ]; then
             echo "No changes detected, but forcing apply to ensure fresh deployment..."
             terragrunt apply -auto-approve
           else
