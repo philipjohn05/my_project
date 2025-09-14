@@ -129,6 +129,10 @@ jobs:
           echo "📊 Build file count: $(find personal-site-main/build -type f | wc -l)"
           echo "📝 Sample files:"
           find personal-site-main/build -type f | head -10
+          echo "📁 Current working directory: $(pwd)"
+          echo "📁 Build directory absolute path: $(readlink -f personal-site-main/build)"
+          echo "🕐 Latest build file timestamp:"
+          find personal-site-main/build -type f -exec stat -f "%m %N" {} \; | sort -n | tail -1
           
       - name: Deploy infrastructure
         run: |
@@ -154,13 +158,16 @@ jobs:
           set -e
           
           if [ "${exit_code}" -eq 2 ]; then
-            echo "Changes detected, applying..."
+            echo "✅ Changes detected, applying..."
             terragrunt apply -auto-approve
           elif [ "${exit_code}" -eq 0 ]; then
-            echo "No changes detected, but forcing apply to ensure fresh deployment..."
+            echo "⚠️ No changes detected by Terraform, but forcing apply to ensure fresh build deployment..."
+            echo "🔧 This ensures that even if Terraform doesn't detect file changes, we still upload fresh builds"
+            echo "🔄 Forcing Terraform to refresh state and re-upload all S3 objects..."
+            terragrunt apply -auto-approve -refresh-only
             terragrunt apply -auto-approve
           else
-            echo "Plan failed with exit code: ${exit_code}"
+            echo "❌ Plan failed with exit code: ${exit_code}"
             exit ${exit_code}
           fi
 
