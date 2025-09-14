@@ -115,6 +115,14 @@ jobs:
           sudo mv terragrunt /usr/local/bin/
           terragrunt --version
 
+      - name: Verify build files
+        run: |
+          echo "🔍 Verifying downloaded build files..."
+          ls -la personal-site-main/build/
+          echo "📊 Build file count: $(find personal-site-main/build -type f | wc -l)"
+          echo "📝 Sample files:"
+          find personal-site-main/build -type f | head -10
+          
       - name: Deploy infrastructure
         run: |
           cd environments/${{ github.event.inputs.environment || 'prod' }}
@@ -128,6 +136,10 @@ jobs:
           terragrunt import aws_s3_bucket_public_access_block.website_bucket_pab "$BUCKET_NAME" 2>/dev/null || echo "PAB not imported"
           terragrunt import aws_s3_bucket_policy.website_bucket_policy "$BUCKET_NAME" 2>/dev/null || echo "Policy not imported"
           
+          # Force Terragrunt to refresh and detect file changes
+          echo "♻️ Forcing Terragrunt to refresh..."
+          terragrunt refresh
+          
           # Now try to plan
           terragrunt plan -detailed-exitcode || exit_code=$?
           
@@ -135,7 +147,8 @@ jobs:
             echo "Changes detected, applying..."
             terragrunt apply -auto-approve
           elif [ ${exit_code} -eq 0 ]; then
-            echo "No changes detected"
+            echo "No changes detected, but forcing apply to ensure fresh deployment..."
+            terragrunt apply -auto-approve
           else
             echo "Plan failed with exit code: ${exit_code}"
             exit ${exit_code}
@@ -149,21 +162,21 @@ jobs:
           echo "url=http://${URL}" >> $GITHUB_OUTPUT
           echo "🌐 Website URL: http://${URL}"
 
-      - name: Invalidate CloudFront (if exists)
+      - name: Invalidate CloudFront
         run: |
-          cd environments/${{ github.event.inputs.environment || 'prod' }}
-          DISTRIBUTION_ID=$(terragrunt output -raw cloudfront_distribution_id 2>/dev/null || echo "")
-          if [ -n "$DISTRIBUTION_ID" ]; then
-            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
-            aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
-          else
-            echo "No CloudFront distribution found, skipping invalidation"
-          fi
+          # Use the known CloudFront distribution ID for pjfaraon.com
+          DISTRIBUTION_ID="E1SKDTU4C4RQ4G"
+          echo "🔄 Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+          INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*" --query "Invalidation.Id" --output text)
+          echo "✅ CloudFront invalidation created: $INVALIDATION_ID"
+          echo "🔍 This will ensure your latest changes are visible within 10-15 minutes"
 
       - name: Deployment summary
         run: |
           echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Environment**: ${{ github.event.inputs.environment || 'prod' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Hash**: ${{ needs.build.outputs.build-hash }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Website URL**: ${{ steps.get-url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Website URL**: https://pjfaraon.com" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Endpoint**: ${{ steps.get-url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
           echo "- **AWS Region**: ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **CloudFront**: Cache invalidated - changes visible in 10-15 minutes" >> $GITHUB_STEP_SUMMARY

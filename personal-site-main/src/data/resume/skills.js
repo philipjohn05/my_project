@@ -5,7 +5,7 @@ const skills = [
     category: ['CI/CD'],
   },
   {
-    title: 'Github Actions',
+    title: 'GitHub Actions',
     competency: 4,
     category: ['CI/CD'],
   },
