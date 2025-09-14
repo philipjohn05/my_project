@@ -61,8 +61,8 @@ const skills = [
   },
   {
     title: 'Amazon Web Services',
-    competency: 4,
-    category: ['Web Development', 'Tools'],
+    competency: 3,
+    category: ['Cloud Computing', 'Tools'],
   },
   {
     title: 'ElasticSearch',
@@ -88,11 +88,6 @@ const skills = [
     title: 'Kubernetes',
     competency: 4,
     category: ['Tools', 'Containerization and Orchestration'],
-  },
-  {
-    title: 'AWS',
-    competency: 3,
-    category: ['Tools', 'Cloud Computing'],
   },
   {
     title: 'Microsoft Azure',
